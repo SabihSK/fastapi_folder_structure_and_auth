@@ -1,0 +1,13 @@
+asyncpg
+bcrypt==4.0.1
+fastapi
+passlib[bcrypt]
+pre-commit
+psycopg2-binary
+pydantic
+pydantic[email]
+pylint
+python-dotenv
+python-jose
+sqlalchemy
+uvicorn
