@@ -44,3 +44,16 @@ class Login(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ForgotPassword(BaseModel):
+    """User ForgotPassword model.
+
+    Args:
+        BaseModel (pydantic): pydantic type model
+    """
+
+    email: EmailStr
+
+    class Config:
+        from_attributes = True

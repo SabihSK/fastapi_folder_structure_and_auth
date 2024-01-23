@@ -12,10 +12,11 @@ from .dependency import (
     check_if_user_exist,
     check_password,
     create_user,
+    forgot_password_email,
     get_user_by_email,
-    verified_user,
+    user_verification,
 )
-from .schemas import Login, OTPverification, Register
+from .schemas import ForgotPassword, Login, OTPverification, Register
 
 # from typing import Any
 
@@ -63,7 +64,7 @@ async def user_opt_verification(
                 "message": constants.USER_NOT_FOUND,
             },
         )
-    return verified_user(db=db, user=user, db_user=db_user)
+    return user_verification(db=db, user=user, db_user=db_user)
 
 
 @userAuth.post("/user/signin", tags=["User"])
@@ -93,3 +94,19 @@ async def signin_user(
             },
         )
     return check_password(password=user.password, user=db_user)
+
+
+@userAuth.post("/user/forgot_password_email", tags=["User"])
+async def user_forgot_password_email(
+    user: ForgotPassword,
+    db: Session = Depends(get_db),
+) -> dict:
+    if not (db_user := get_user_by_email(db=db, email=user.email)):
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "status": False,
+                "message": constants.USER_NOT_FOUND,
+            },
+        )
+    return forgot_password_email(db=db, user=user, db_user=db_user)

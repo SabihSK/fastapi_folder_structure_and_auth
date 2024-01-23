@@ -101,7 +101,7 @@ def create_user(db: Session, user: Register) -> dict:
         )
 
 
-def verified_user(db: Session, user: OTPverification, db_user: UserModel) -> dict:
+def user_verification(db: Session, user: OTPverification, db_user: UserModel) -> dict:
     try:
         if user.otp != db_user.otp:
             raise HTTPException(
@@ -126,6 +126,36 @@ def verified_user(db: Session, user: OTPverification, db_user: UserModel) -> dic
                 "phone": db_user.phone,
                 "user_role": db_user.user_role,
             },
+        }
+
+    except KeyError:
+        return HTTPException(
+            status_code=404,
+            detail={
+                "status": False,
+                "message": constants.SOMETHING_WRONG,
+            },
+        )
+
+
+def forgot_password_email(
+    db: Session, user: OTPverification, db_user: UserModel
+) -> dict:
+    try:
+        otp = "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
+
+        db.query(UserModel).filter_by(email=user.email).update(
+            {UserModel.otp: otp, UserModel.updated_at: datetime.utcnow()}
+        )
+        db.commit()
+
+        gmail_html_email_sender(
+            db_user.full_name, otp, db_user.email, EmailTemplate.FORGET_PASS.value
+        )
+
+        return {
+            "status": True,
+            "message": constants.OTP_SEND,
         }
 
     except KeyError:

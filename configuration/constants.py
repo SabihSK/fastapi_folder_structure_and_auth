@@ -12,9 +12,10 @@ contactInfo = {
 
 """Auth API constants"""
 ALREADY_REGISTERED = "The user has already registered."
-USER_REGISTERED = "User has been successfully registered and OTP send on your email."
+USER_REGISTERED = "User has been successfully registered and OTP send to your email."
 USER_NOT_VERIFY = "User not verified."
 USER_VERIFY = "User has been verified successfully."
+OTP_SEND = "OTP send to your email."
 OTP_NOT_MATCH = "User OTP not match."
 USER_NOT_FOUND = "User not found."
 INVALID_USER = "Invalid email or password!"
