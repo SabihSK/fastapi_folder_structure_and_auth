@@ -57,3 +57,17 @@ class ForgotPassword(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ResetUserPassword(BaseModel):
+    """User ResetUserPassword model.
+
+    Args:
+        BaseModel (pydantic): pydantic type model
+    """
+
+    email: EmailStr
+    password: str
+
+    class Config:
+        from_attributes = True

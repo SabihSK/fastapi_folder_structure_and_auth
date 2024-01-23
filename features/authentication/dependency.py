@@ -10,7 +10,12 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from configuration import constants
-from features.authentication.schemas import OTPverification, Register
+from features.authentication.schemas import (
+    ForgotPassword,
+    OTPverification,
+    Register,
+    ResetUserPassword,
+)
 from utilities.email.main_email import gmail_html_email_sender
 from utilities.enums import EmailTemplate, UserRole
 from utilities.hashed_password import get_hashed_password, verify_password
@@ -93,7 +98,7 @@ def create_user(db: Session, user: Register) -> dict:
 
     except KeyError:
         return HTTPException(
-            status_code=404,
+            status_code=400,
             detail={
                 "status": False,
                 "message": constants.SOMETHING_WRONG,
@@ -130,7 +135,7 @@ def user_verification(db: Session, user: OTPverification, db_user: UserModel) ->
 
     except KeyError:
         return HTTPException(
-            status_code=404,
+            status_code=400,
             detail={
                 "status": False,
                 "message": constants.SOMETHING_WRONG,
@@ -139,7 +144,7 @@ def user_verification(db: Session, user: OTPverification, db_user: UserModel) ->
 
 
 def forgot_password_email(
-    db: Session, user: OTPverification, db_user: UserModel
+    db: Session, user: ForgotPassword, db_user: UserModel
 ) -> dict:
     try:
         otp = "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
@@ -160,7 +165,39 @@ def forgot_password_email(
 
     except KeyError:
         return HTTPException(
-            status_code=404,
+            status_code=400,
+            detail={
+                "status": False,
+                "message": constants.SOMETHING_WRONG,
+            },
+        )
+
+
+def reset_password(db: Session, user: ResetUserPassword, db_user: UserModel) -> dict:
+    try:
+        db.query(UserModel).filter_by(email=user.email).update(
+            {
+                UserModel.password: get_hashed_password(user.password),
+                UserModel.updated_at: datetime.utcnow(),
+            }
+        )
+        db.commit()
+
+        return {
+            "status": True,
+            "message": constants.PASSWORD_CHANGE,
+            "data": {
+                "id": db_user.id,
+                "full_name": db_user.full_name,
+                "email": db_user.email,
+                "phone": db_user.phone,
+                "user_role": db_user.user_role,
+            },
+        }
+
+    except KeyError:
+        return HTTPException(
+            status_code=400,
             detail={
                 "status": False,
                 "message": constants.SOMETHING_WRONG,

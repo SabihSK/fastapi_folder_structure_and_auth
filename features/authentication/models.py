@@ -1,5 +1,5 @@
 """Models of Auth"""
-from sqlalchemy import Boolean, Column, Enum, Integer, String
+from sqlalchemy import Boolean, Column, Enum, Integer, String, Text
 
 from db.db_mixin import Timestamp
 from db.db_setup import Base
@@ -20,7 +20,7 @@ class UserModel(Timestamp, Base):
     full_name = Column(String(100), index=True, nullable=False)
     email = Column(String(100), unique=True, index=True, nullable=False)
     phone = Column(String(13), index=True)
-    password = Column(String(100), nullable=False)
+    password = Column(Text, nullable=False)
     is_verify = Column(Boolean, default=False)
     user_role = Column(Enum(UserRole), nullable=False)
     otp = Column(String(6))

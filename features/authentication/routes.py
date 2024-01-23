@@ -14,9 +14,10 @@ from .dependency import (
     create_user,
     forgot_password_email,
     get_user_by_email,
+    reset_password,
     user_verification,
 )
-from .schemas import ForgotPassword, Login, OTPverification, Register
+from .schemas import ForgotPassword, Login, OTPverification, Register, ResetUserPassword
 
 # from typing import Any
 
@@ -110,3 +111,19 @@ async def user_forgot_password_email(
             },
         )
     return forgot_password_email(db=db, user=user, db_user=db_user)
+
+
+@userAuth.post("/user/reset_password", tags=["User"])
+async def reset_user_password(
+    user: ResetUserPassword,
+    db: Session = Depends(get_db),
+) -> dict:
+    if not (db_user := get_user_by_email(db=db, email=user.email)):
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "status": False,
+                "message": constants.USER_NOT_FOUND,
+            },
+        )
+    return reset_password(db=db, user=user, db_user=db_user)
