@@ -18,6 +18,20 @@ class Register(BaseModel):
         from_attributes = True
 
 
+class OTPverification(BaseModel):
+    """User OTPverification model.
+
+    Args:
+        BaseModel (pydantic): pydantic type model
+    """
+
+    email: EmailStr
+    otp: str
+
+    class Config:
+        from_attributes = True
+
+
 class Login(BaseModel):
     """User Login model.
 

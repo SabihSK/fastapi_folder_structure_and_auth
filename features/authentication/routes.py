@@ -13,8 +13,9 @@ from .dependency import (
     check_password,
     create_user,
     get_user_by_email,
+    verified_user,
 )
-from .schemas import Login, Register
+from .schemas import Login, OTPverification, Register
 
 # from typing import Any
 
@@ -22,7 +23,7 @@ from .schemas import Login, Register
 userAuth = APIRouter()
 
 
-@userAuth.post("/user/register")
+@userAuth.post("/user/register", tags=["User"])
 async def register_user(
     user: Register,
     db: Session = Depends(get_db),
@@ -49,7 +50,23 @@ async def register_user(
     return create_user(db=db, user=user)
 
 
-@userAuth.post("/user/signin")
+@userAuth.post("/user/otp_verification", tags=["User"])
+async def user_opt_verification(
+    user: OTPverification,
+    db: Session = Depends(get_db),
+) -> dict:
+    if not (db_user := get_user_by_email(db=db, email=user.email)):
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "status": False,
+                "message": constants.USER_NOT_FOUND,
+            },
+        )
+    return verified_user(db=db, user=user, db_user=db_user)
+
+
+@userAuth.post("/user/signin", tags=["User"])
 async def signin_user(
     user: Login,
     db: Session = Depends(get_db),
