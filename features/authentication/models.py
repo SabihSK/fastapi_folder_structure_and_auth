@@ -3,8 +3,7 @@ from sqlalchemy import Boolean, Column, Enum, Integer, String
 
 from db.db_mixin import Timestamp
 from db.db_setup import Base
-
-from .dependency import UserRole
+from utilities.enums import UserRole
 
 
 class UserModel(Timestamp, Base):

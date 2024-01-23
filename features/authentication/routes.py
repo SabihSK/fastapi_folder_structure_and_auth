@@ -67,4 +67,12 @@ async def signin_user(
                 "message": constants.USER_NOT_FOUND,
             },
         )
+    if not db_user.is_verify:
+        raise HTTPException(
+            status_code=401,
+            detail={
+                "status": False,
+                "message": constants.USER_NOT_VERIFY,
+            },
+        )
     return check_password(password=user.password, user=db_user)

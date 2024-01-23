@@ -32,7 +32,7 @@ def gmail_html_email_sender(
         )
         msg.attach(html_part)
         msg["Subject"] = "OTP verification"
-        msg["From"] = PROJECT_TITLE  # + " <" + sender_email + ">"
+        msg["From"] = PROJECT_TITLE + " <" + sender_email + ">"
         msg["To"] = receiver_email
         smtp_server.sendmail(sender_email, receiver_email, msg.as_string())
         smtp_server.quit()
