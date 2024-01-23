@@ -1,10 +1,10 @@
+import email.mime.text as mime
 import smtplib
 import ssl
-import email.mime.multipart as multipart
-import email.mime.text as mime
+from email.mime import multipart
 
-from configuration.constants import PROJECT_TITLE
 from configuration.configure import sender_email, sender_password
+from configuration.constants import PROJECT_TITLE
 
 
 def gmail_html_email_sender(
@@ -12,9 +12,10 @@ def gmail_html_email_sender(
     db_otp: str,
     receiver_email: str,
     email_template: str,
-):
+) -> None:
+    file_location = "utilities/email/custom_emails/" + email_template + ".html"
     with open(
-        "utilities/email/custom_emails/" + email_template + ".html",
+        file_location,
         "r",
         encoding="utf-8",
     ) as file:

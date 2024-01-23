@@ -2,20 +2,22 @@
 
 from __future__ import annotations
 
-# from typing import Any
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from configuration import constants
 from db.db_setup import get_db
-from features.authentication.dependency import (
+
+from .dependency import (
     check_if_user_exist,
     check_password,
     create_user,
-    get_user_by_cnic,
+    get_user_by_email,
 )
-from features.authentication.schemas import Login, Register
+from .schemas import Login, Register
+
+# from typing import Any
+
 
 userAuth = APIRouter()
 
@@ -57,7 +59,7 @@ async def signin_user(
     Returns:
         User: Will return user info.
     """
-    if not (db_user := get_user_by_cnic(db=db, cnic=user.cnic)):
+    if not (db_user := get_user_by_email(db=db, email=user.email)):
         raise HTTPException(
             status_code=404,
             detail={

@@ -11,7 +11,6 @@ class Register(BaseModel):
 
     full_name: str
     email: EmailStr
-    cnic: str
     phone: str
     password: str
 
@@ -26,7 +25,7 @@ class Login(BaseModel):
         BaseModel (pydantic): pydantic type model
     """
 
-    cnic: str
+    email: EmailStr
     password: str
 
     class Config:

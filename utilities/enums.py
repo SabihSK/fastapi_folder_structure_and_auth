@@ -8,8 +8,7 @@ class UserRole(enum.Enum):
         enum (User Role): To check the role of user.
     """
 
-    ADMIN = "admin"
-    GOVT_OFFICIAL = "govtOfficial"
+    VENDOR = "vendor"
     USER = "user"
 
 
@@ -20,7 +19,7 @@ class EmailTemplate(enum.Enum):
         enum (Email Template): The list of Email Template.
     """
 
-    SIGNUP = "signup_email_template"
+    REGISTER = "register_email_template"
     LOGIN = "login_email_template"
     FORGET_PASS = "forget_pass_email_template"
     DOC_APPROVE = "document_approve"

@@ -3,73 +3,66 @@
 import random
 import string
 
-from sqlalchemy import or_
+# from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from configuration import constants
-from features.authentication.schemas import Login, Register
+from features.authentication.schemas import Register
 from utilities.email.main_email import gmail_html_email_sender
-from utilities.enums import UserRole, EmailTemplate
+from utilities.enums import EmailTemplate, UserRole
 from utilities.hashed_password import get_hashed_password, verify_password
 
 from .models import UserModel
 
 
-def get_user_by_cnic(db: Session, cnic: str) -> UserModel:
-    return db.query(UserModel).filter(UserModel.cnic == cnic).first()
+def get_user_by_email(db: Session, email: str) -> UserModel:
+    return db.query(UserModel).filter(UserModel.email == email).first()
 
 
 def check_if_user_exist(db: Session, user: Register) -> UserModel:
     return (
         db.query(UserModel)
         .filter(
-            or_(
-                UserModel.email == user.email,
-                UserModel.cnic == user.cnic,
-            ),
+            UserModel.email == user.email,
         )
         .first()
     )
 
 
-def check_password(password: str, user: Login) -> dict[str, object]:
+def check_password(password: str, user: UserModel) -> dict:
     if not verify_password(password, user.password):
         return {
             "status": False,
             "message": constants.USER_NOT_FOUND,
         }
-    else:
-        return {
-            "status": True,
-            "message": constants.USER_LOGIN,
-            "data": {
-                "id": user.id,
-                "full_name": user.full_name,
-                "email": user.email,
-                "cnic": user.cnic,
-                "phone": user.phone,
-                "is_active": user.is_active,
-                "user_role": user.user_role,
-                "document_id": user.document_id,
-                "property_owner": user.property_owner,
-            },
-        }
+
+    return {
+        "status": True,
+        "message": constants.USER_LOGIN,
+        "data": {
+            "id": user.id,
+            "full_name": user.full_name,
+            "email": user.email,
+            "phone": user.phone,
+            "user_role": user.user_role,
+        },
+    }
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 100) -> UserModel:
     return db.query(UserModel).offset(skip).limit(limit).all()
 
 
-def create_user(db: Session, user: Register) -> dict[str, object]:
+def create_user(db: Session, user: Register) -> dict:
     try:
-        otp = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+        otp = "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
         db_user = UserModel(
             full_name=user.full_name,
             email=user.email,
-            cnic=user.cnic,
             phone=user.phone,
             password=get_hashed_password(user.password),
             user_role=UserRole.USER,
+            otp=otp,
         )
 
         db.add(db_user)
@@ -77,10 +70,7 @@ def create_user(db: Session, user: Register) -> dict[str, object]:
         db.refresh(db_user)
 
         gmail_html_email_sender(
-            user.full_name,
-            otp,
-            user.email,
-            EmailTemplate.SIGNUP
+            user.full_name, otp, user.email, EmailTemplate.REGISTER.value
         )
 
         return {
@@ -90,12 +80,8 @@ def create_user(db: Session, user: Register) -> dict[str, object]:
                 "id": db_user.id,
                 "full_name": db_user.full_name,
                 "email": db_user.email,
-                "cnic": db_user.cnic,
                 "phone": db_user.phone,
-                "is_active": db_user.is_active,
                 "user_role": db_user.user_role,
-                "document_id": db_user.document_id,
-                "property_owner": db_user.property_owner,
             },
         }
 
