@@ -1,16 +1,14 @@
-# Deedx-Baratheon-Hackathon
+# FastAPI
 
 ## Introduction
 
-In this project we will allow you to connect your whatsapp with your chatbot.
+Folder Structure for FastAPI.
 
 ## Architecture Diagram
 
-<img src="readme/Architecture.png">
 
 ## Schema Diagram
 
-- [Schema](https://lucid.app/lucidchart/5395f824-da3f-4df7-bf44-49a4c1200f66/edit?invitationId=inv_a72362cf-b225-48fd-937a-7cc32b35013b&page=0_0#)
 
 ## 🎉 Release Status
 
@@ -53,10 +51,9 @@ Thanks to everyone who supported.
 
 ## 👨‍💻 Developed By
 
-XLoop Digital
-[©xloopdigital.com](https://xloopdigital.com)
+Sheikh Muhammad Sabih
 
 ## 💬 Contact
 
 Send us an email if you need to contact us to discuss anything.
-Email - <sales@xloopdigital.com>
+Email - <sabih.sk1@gmail.com>
